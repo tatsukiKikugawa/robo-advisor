@@ -1,4 +1,7 @@
 # robo-advisor
+
+Link to project description: https://github.com/prof-rossetti/intro-to-python/blob/master/projects/robo-advisor/README.md
+
 ### Environment Setup
 
 Create and activate a new Anaconda virtual environment:
@@ -14,6 +17,8 @@ From within the virtual environment, install the required packages specified in 
 pip install -r requirements.txt
 ```
 
+### Usage
+
 From within the virtual environment, demonstrate your ability to run the Python script from the command-line:
 
 ```sh
@@ -22,6 +27,6 @@ python app/robo_advisor.py
 
 If you see the example output, you're ready to move on to project development. This would be a great time to make any desired modifications to your project's "README.md" file (like adding instructions for how to setup and run the app like you've just done), and then make your first commit, with a message like "Setup the repo".
 
-### Usage
+
 
 
