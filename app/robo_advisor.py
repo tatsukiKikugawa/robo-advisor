@@ -2,6 +2,7 @@
 
 import requests
 import json
+import datetime
 import os
 import csv
 from dotenv import load_dotenv
@@ -12,7 +13,12 @@ print("REQUESTING SOME DATA FROM THE INTERNET...")
 
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
 
-#Processing  user inputs.
+def to_usd(my_price):
+    return "${0:,.2f}".format(my_price)
+#
+#Processing user inputs.
+#
+
 symbol = input("Please type a stock symbol you are looking for:  ")
 print(f"You chose: " + str(symbol))
 
@@ -42,33 +48,39 @@ if "Error Message" in response.text:
 parsed_response = json.loads(response.text) #>to parse response.text (str) to dict
 #print(type(parsed_response))    
 #> list dict_keys(['Meta Data', 'Time Series (Daily)'])
-last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"] 
+
+latest_close = parsed_response["Time Series (Daily)"]["2020-02-28"]["4. close"]
+
+
+
 
 #Writing a CSV file 
-csv_file_path = "data/stock.csv" 
-
-
-
-tsd = parsed_response["Time Series (Daily)"]
-for date, prices in tsd.items():
-    print(date)
-    print(prices)
-    print("----")
-#print(parsed_response)
+#csv_file_path = "data/stock.csv" 
+#
+#tsd = parsed_response["Time Series (Daily)"]
+#for date, prices in tsd.items():
+#    print(date)
+#    print(prices)
+#    print("----")
 
 
 #
-#first_prod = parsed_response[0]
-#print(first_prod["name"])
+# INFO OUTPUTs
+#
+
+
+now = datetime.datetime.today()
+current_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: 2018-02-20 02:00pm")
+print(f"REQUEST AT: {current_time}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
-print("LATEST CLOSE: $100,000.00")
+print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print("RECENT HIGH: $101,000.00")
 print("RECENT LOW: $99,000.00")
 print("-------------------------")
