@@ -50,8 +50,14 @@ parsed_response = json.loads(response.text) #>to parse response.text (str) to di
 #> list dict_keys(['Meta Data', 'Time Series (Daily)'])
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"] 
 
-latest_close = parsed_response["Time Series (Daily)"]["2020-02-28"]["4. close"]
+tsd = parsed_response["Time Series (Daily)"]
 
+#Assuming the latest day is non top
+dates = list(tsd.keys())
+
+latest_day = dates[0]
+
+latest_close = parsed_response["Time Series (Daily)"][latest_day]["4. close"]
 
 
 
