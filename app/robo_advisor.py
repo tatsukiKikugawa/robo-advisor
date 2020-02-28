@@ -1,11 +1,16 @@
 # app/robo_advisor.py
 
-import requests
+
 import json
 import datetime
 import os
 import csv
+
 from dotenv import load_dotenv
+import requests
+
+def to_usd(my_price):
+    return "${0:,.2f}".format(my_price)
 
 load_dotenv()
 
@@ -13,8 +18,6 @@ print("REQUESTING SOME DATA FROM THE INTERNET...")
 
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
 
-def to_usd(my_price):
-    return "${0:,.2f}".format(my_price)
 #
 #Processing user inputs.
 #
