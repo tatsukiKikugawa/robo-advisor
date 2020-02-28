@@ -16,6 +16,15 @@ From within the virtual environment, install the required packages specified in 
 ```sh
 pip install -r requirements.txt
 ```
+### API Setup
+
+Visit https://www.alphavantage.co/support/#api-key
+
+Create a new API key for yourself and place inside the following line in your .env file
+
+```sh
+ALPHAVANTAGE_API_KEY = "____YOUR_API_KEY____"
+```
 
 ### Usage
 

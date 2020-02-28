@@ -24,21 +24,13 @@ print(f"You chose: " + str(symbol))
 
 #Vadlidating user inputs
 if len(symbol) != 4:
-    print("Oh, expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
-    exit()
-#elif int(symbol) == [0,99999]:
-#    print("Oh, expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
-#    exit()
+    print("Oh, expecting a properly-formed stock symbol like 'MSFT' with no space. Please try again.")
+    exit() #TODO: Validate invalid user inputs further
 
 request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={API_KEY}]"
 
-#print("URL: ", request_url)
 response = requests.get(request_url)
-#print(type(response))   #>'requests.models.Response'
-#print(dir(response))
-#print(response.status_code)
-#print(response.text)
-#print(type(response.text))  #>'str'
+
 
 #handle response errors
 if "Error Message" in response.text:
@@ -59,34 +51,38 @@ latest_day = dates[0]
 
 latest_close = tsd[latest_day]["4. close"]
 
-#Get high price from each day
-#maximum of all high prices
+#Get high price from each day with the maximum of all high prices
 high_prices = []
+low_prices = []
 
 for date in dates:
     high_price = tsd[date]["2. high"]
     high_prices.append(high_price)
+    low_price = tsd[date]["3. low"]
+    low_prices.append(low_price)
 
 recent_high = max(high_prices)
+recent_low = min(low_prices)
 
-
-#Writing a CSV file 
-#csv_file_path = "data/stock.csv" 
-#
-#tsd = parsed_response["Time Series (Daily)"]
-#for date, prices in tsd.items():
-#    print(date)
-#    print(prices)
-#    print("----")
-
+now = datetime.datetime.today()
+current_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
 #
 # INFO OUTPUTs
 #
 
 
-now = datetime.datetime.today()
-current_time = now.strftime("%Y-%m-%d %H:%M:%S")
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+
+with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=["city", "name"])
+    writer.writeheader() # uses fieldnames set above
+    writer.writerow({"city": "New York", "name": "Yankees"})
+    writer.writerow({"city": "New York", "name": "Mets"})
+    writer.writerow({"city": "Boston", "name": "Red Sox"})
+    writer.writerow({"city": "New Haven", "name": "Ravens"})
+
+
 
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
@@ -97,10 +93,13 @@ print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
-print("RECENT LOW: $99,000.00")
+print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
+print(f"fWRITING DATA TO CSV: {csv_file_path}...")
+print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
