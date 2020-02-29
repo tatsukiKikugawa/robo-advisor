@@ -3,6 +3,7 @@
 
 import json
 import datetime
+import time
 import os
 import csv
 import re
@@ -16,7 +17,6 @@ def to_usd(my_price):
 load_dotenv()
 
 print("REQUESTING SOME DATA FROM THE INTERNET...")
-
 
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
 
@@ -54,15 +54,23 @@ if "Error Message" in response.text:
 
 parsed_response = json.loads(response.text)   
 #> list dict_keys(['Meta Data', 'Time Series (Daily)'])
+
+#Date and time for a human friendly output
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"] 
+last_refreshed = datetime.datetime.strptime(last_refreshed, '%Y-%m-%d')
+last_refreshed = last_refreshed.strftime("%b/%d/%Y")
+print(last_refreshed)
+
+#Adapted from https://timestamp.online/article/how-to-convert-timestamp-to-datetime-in-python
+ts = time.gmtime()
+time_requested = time.strftime("%c", ts)    #>Sat Feb 29 01:12:24 2020
+
 
 tsd = parsed_response["Time Series (Daily)"]
 
 #Assuming the latest day is non top
 dates = list(tsd.keys())
-
 latest_day = dates[0]
-
 latest_close = tsd[latest_day]["4. close"]
 
 #Get high price from each day with the maximum of all high prices
@@ -78,8 +86,8 @@ for date in dates:
 recent_high = max(high_prices)
 recent_low = min(low_prices)
 
-now = datetime.datetime.today()
-current_time = now.strftime("%Y-%m-%d %H:%M:%S")
+#now = datetime.datetime.today()
+#current_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
 #Calculate recommendation based on the user risk tolerance
 recommend_plan = " "
@@ -110,15 +118,11 @@ with open(csv_file_path, "w") as csv_file:
             "volume": daily_prices["6. volume"]
             })
  
-
-#The date and time when the program was executed, formatted in a human-friendly way (e.g. "Run at: 11:52pm on June 5th, 2018")
-#The date when the data was last refreshed, usually the same as the latest available day of daily trading data (e.g. "Latest Data from: June 4th, 2018")
-
 print("-------------------------")
 print("SELECTED SYMBOL: " + symbol)
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print(f"REQUEST AT: {current_time}")
+print(f"REQUEST AT: {time_requested}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
